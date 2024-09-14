@@ -65,7 +65,7 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## Stay in touch
 
 - Author - Anubhav Rajpoot
-- LinkedIn - [](https://www.linkedin.com/in/anubhav-rajpoot-7344a21ba/)
+- LinkedIn - [linkedIn](https://www.linkedin.com/in/anubhav-rajpoot-7344a21ba/)
 
 ## License
 

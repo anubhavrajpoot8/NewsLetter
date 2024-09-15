@@ -1,6 +1,7 @@
+import { ClickStat } from 'src/click_stats/entities/click_stat.entity';
 import { List } from 'src/lists/entities/list.entity';
 import { Organization } from 'src/organizations/entities/organization.entity';
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn } from 'typeorm';
 
 
 @Entity('campaigns')
@@ -8,10 +9,10 @@ export class Campaign {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ type: 'varchar', length: 255 })
+    @Column({ length: 255 })
     subject: string;
 
-    @Column({ type: 'text' })
+    @Column('text')
     content: string;
 
     @ManyToOne(() => List, list => list.campaigns, { onDelete: 'CASCADE' })
@@ -20,7 +21,9 @@ export class Campaign {
     @ManyToOne(() => Organization, organization => organization.campaigns, { onDelete: 'CASCADE' })
     organization: Organization;
 
-    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    @OneToMany(() => ClickStat, clickStat => clickStat.campaign)
+    clickStats: ClickStat[];
+
+    @CreateDateColumn()
     createdAt: Date;
-    clickStats: any;
 }

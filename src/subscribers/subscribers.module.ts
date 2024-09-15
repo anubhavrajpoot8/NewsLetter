@@ -1,9 +1,13 @@
 import { Module } from '@nestjs/common';
-import { SubscribersService } from './subscribers.service';
-import { SubscribersController } from './subscribers.controller';
+import { SubscriberController } from './subscribers.controller';
+import { SubscriberService } from './subscribers.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Subscriber } from './entities/subscriber.entity';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  controllers: [SubscribersController],
-  providers: [SubscribersService],
+  imports: [TypeOrmModule.forFeature([Subscriber]), AuthModule],
+  controllers: [SubscriberController],
+  providers: [SubscriberService],
 })
-export class SubscribersModule {}
+export class SubscribersModule { }

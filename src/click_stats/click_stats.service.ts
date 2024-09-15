@@ -1,26 +1,22 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { ClickStat } from './entities/click_stat.entity';
 import { CreateClickStatDto } from './dto/create-click_stat.dto';
-import { UpdateClickStatDto } from './dto/update-click_stat.dto';
 
 @Injectable()
-export class ClickStatsService {
+export class ClickStatService {
+  constructor(
+    @InjectRepository(ClickStat)
+    private clickStatRepository: Repository<ClickStat>,
+  ) { }
+
   create(createClickStatDto: CreateClickStatDto) {
-    return 'This action adds a new clickStat';
+    const clickStat = this.clickStatRepository.create(createClickStatDto);
+    return this.clickStatRepository.save(clickStat);
   }
 
   findAll() {
-    return `This action returns all clickStats`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} clickStat`;
-  }
-
-  update(id: number, updateClickStatDto: UpdateClickStatDto) {
-    return `This action updates a #${id} clickStat`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} clickStat`;
+    return this.clickStatRepository.find();
   }
 }

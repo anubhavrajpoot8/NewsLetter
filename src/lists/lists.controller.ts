@@ -1,34 +1,26 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ListsService } from './lists.service';
+import { Controller, Get, Post, Body, Put, Param, UseGuards } from '@nestjs/common';
 import { CreateListDto } from './dto/create-list.dto';
 import { UpdateListDto } from './dto/update-list.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ListService } from './lists.service';
 
 @Controller('lists')
-export class ListsController {
-  constructor(private readonly listsService: ListsService) {}
+@UseGuards(JwtAuthGuard)
+export class ListController {
+  constructor(private readonly listService: ListService) { }
 
   @Post()
   create(@Body() createListDto: CreateListDto) {
-    return this.listsService.create(createListDto);
+    return this.listService.create(createListDto);
   }
 
   @Get()
   findAll() {
-    return this.listsService.findAll();
+    return this.listService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.listsService.findOne(+id);
-  }
-
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateListDto: UpdateListDto) {
-    return this.listsService.update(+id, updateListDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.listsService.remove(+id);
+    return this.listService.update(id, updateListDto);
   }
 }

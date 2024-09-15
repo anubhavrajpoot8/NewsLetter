@@ -1,34 +1,26 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { OrganizationsService } from './organizations.service';
+import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
-import { UpdateOrganizationDto } from './dto/update-organization.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { OrganizationService } from './organizations.service';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { UserRole } from 'src/users/entities/user.entity';
+import { Roles } from 'src/auth/role.decorator';
 
 @Controller('organizations')
-export class OrganizationsController {
-  constructor(private readonly organizationsService: OrganizationsService) {}
+@UseGuards(JwtAuthGuard, RolesGuard)
+export class OrganizationController {
+  constructor(private readonly organizationService: OrganizationService) { }
 
   @Post()
-  create(@Body() createOrganizationDto: CreateOrganizationDto) {
-    return this.organizationsService.create(createOrganizationDto);
+  async create(@Body() createOrganizationDto: CreateOrganizationDto) {
+    const data = await this.organizationService.create(createOrganizationDto);
+    return data;
   }
 
   @Get()
+  @Roles(UserRole.ADMIN)
   findAll() {
-    return this.organizationsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.organizationsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOrganizationDto: UpdateOrganizationDto) {
-    return this.organizationsService.update(+id, updateOrganizationDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.organizationsService.remove(+id);
+    return this.organizationService.findAll();
   }
 }
+

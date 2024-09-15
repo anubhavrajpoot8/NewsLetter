@@ -1,34 +1,26 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { SubscribersService } from './subscribers.service';
+import { Controller, Get, Post, Body, Put, Param, Query, UseGuards } from '@nestjs/common';
 import { CreateSubscriberDto } from './dto/create-subscriber.dto';
 import { UpdateSubscriberDto } from './dto/update-subscriber.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { SubscriberService } from './subscribers.service';
 
 @Controller('subscribers')
-export class SubscribersController {
-  constructor(private readonly subscribersService: SubscribersService) {}
+@UseGuards(JwtAuthGuard)
+export class SubscriberController {
+  constructor(private readonly subscriberService: SubscriberService) { }
 
   @Post()
   create(@Body() createSubscriberDto: CreateSubscriberDto) {
-    return this.subscribersService.create(createSubscriberDto);
+    return this.subscriberService.create(createSubscriberDto);
   }
 
   @Get()
-  findAll() {
-    return this.subscribersService.findAll();
+  findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 10) {
+    return this.subscriberService.findAll(page, limit);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.subscribersService.findOne(+id);
-  }
-
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateSubscriberDto: UpdateSubscriberDto) {
-    return this.subscribersService.update(+id, updateSubscriberDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.subscribersService.remove(+id);
+    return this.subscriberService.update(id, updateSubscriberDto);
   }
 }

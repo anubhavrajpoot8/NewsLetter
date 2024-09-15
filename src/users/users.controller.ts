@@ -1,34 +1,44 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { AuthService } from '../auth/auth.service';
+import { UserService } from './users.service';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Controller('users')
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+export class UserController {
+  constructor(
+    private readonly userService: UserService,
+    private readonly authService: AuthService,
+  ) { }
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  @Post('register')
+  async register(@Body() createUserDto: CreateUserDto) {
+    const user = await this.userService.create(createUserDto);
+    return { message: 'User registered successfully', userId: user.id };
   }
 
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
+  @Post('login')
+  async login(@Body() loginUserDto: LoginUserDto) {
+    const user = await this.authService.validateUser(loginUserDto.email, loginUserDto.password);
+    return this.authService.login(user);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  getProfile(@Request() req) {
+    return req.user;
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  @UseGuards(JwtAuthGuard)
+  @Patch('profile')
+  update(@Request() req, @Body() updateUserDto: Partial<CreateUserDto>) {
+    return this.userService.update(req.user.userId, updateUserDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  @UseGuards(JwtAuthGuard)
+  @Delete('profile')
+  remove(@Request() req) {
+    return this.userService.remove(req.user.userId);
   }
 }

@@ -2,19 +2,18 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { Module } from '@nestjs/common';
 import { EmailService } from './email.service';
 import { EmailController } from './email.controller';
-import { config } from '@zpaisa/config';
 
 @Module({
     imports: [
         MailerModule.forRootAsync({
             useFactory: async () => ({
                 transport: {
-                    host: config.mail_host,
+                    host: process.env.mail_host,
                     port: 587,
                     secure: false,
                     auth: {
-                        user: config.mail_user,
-                        pass: config.mail_password,
+                        user: process.env.mail_user,
+                        pass: process.env.mail_password,
                     },
                 },
                 defaults: {

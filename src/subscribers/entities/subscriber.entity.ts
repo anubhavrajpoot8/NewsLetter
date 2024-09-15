@@ -15,9 +15,6 @@ export class Subscriber {
     @Column('jsonb', { nullable: true })
     customFields: object;
 
-    @Column('text', { nullable: true })
-    gpgPublicKey: string;
-
     @CreateDateColumn()
     createdAt: Date;
 }

@@ -12,8 +12,4 @@ export class CreateSubscriberDto {
     @IsOptional()
     @IsObject()
     customFields?: object;
-
-    @IsOptional()
-    @IsString()
-    gpgPublicKey?: string;
 }

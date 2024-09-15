@@ -15,6 +15,9 @@ import { ClickStat } from './click_stats/entities/click_stat.entity';
 import { Organization } from './organizations/entities/organization.entity';
 import { Subscriber } from './subscribers/entities/subscriber.entity';
 import { User } from './users/entities/user.entity';
+import { EmailModule } from './email/email.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TasksModule } from './tasks/task.module';
 @Global()
 @Module({
   imports: [
@@ -35,7 +38,9 @@ import { User } from './users/entities/user.entity';
     ListsModule,
     CampaignsModule,
     ClickStatsModule,
-    AuthModule
+    AuthModule,
+    EmailModule,
+    ScheduleModule.forRoot(), TasksModule,
   ],
   controllers: [AppController],
   providers: [AppService],

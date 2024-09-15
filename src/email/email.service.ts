@@ -43,14 +43,14 @@ export class EmailService {
         <body>
             <div class="container">
                 <div class="header">
-                    Reminder Regarding Z-RENTAL Subscription !!!
+                    New Info From NewsLetter !!!
                 </div>
                 <div class="content">
                     <strong>${text}</strong>
                 </div>
                 <div class="footer">
                     Thank you,<br>
-                    Team Z-RENTALS
+                    Team NewsLetter
                 </div>
             </div>
         </body>

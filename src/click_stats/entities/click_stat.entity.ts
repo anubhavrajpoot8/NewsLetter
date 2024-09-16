@@ -1,3 +1,4 @@
+// click_stat.entity.ts
 import { Campaign } from 'src/campaigns/entities/campaign.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
 

@@ -1,5 +1,6 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsOptional, MinLength } from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsUUID, MinLength } from 'class-validator';
 import { UserRole } from '../entities/user.entity';
+import { UUID } from 'crypto';
 
 export class CreateUserDto {
     @IsEmail()
@@ -14,4 +15,8 @@ export class CreateUserDto {
 
     @IsOptional()
     role?: UserRole;
+
+    @IsNotEmpty()
+    @IsUUID()
+    organizationId: UUID;
 }

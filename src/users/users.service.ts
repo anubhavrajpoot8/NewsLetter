@@ -4,15 +4,19 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { User, UserRole } from './entities/user.entity';
+import { Organization } from 'src/organizations/entities/organization.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(Organization)
+    private organizationRepository: Repository<Organization>,
   ) { }
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto) {
+
     const existingUser = await this.userRepository.findOne({ where: { email: createUserDto.email } });
     if (existingUser) {
       throw new ConflictException('Email already exists');
@@ -20,13 +24,27 @@ export class UserService {
 
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
 
-    const user = this.userRepository.create({
-      email: createUserDto.email,
-      passwordHash: hashedPassword,
-      role: createUserDto.role || 'User' as UserRole,
-    });
+    if (createUserDto.organizationId) {
+      const organization = await this.organizationRepository.findOne({ where: { id: createUserDto.organizationId } });
+      if (organization) {
+        const user = new User();
+        user.email = createUserDto.email;
+        user.passwordHash = hashedPassword;
+        user.role = createUserDto.role;
 
-    return this.userRepository.save(user);
+        if (createUserDto.organizationId) {
+          const organization = await this.organizationRepository.findOne({ where: { id: createUserDto.organizationId } });
+          if (organization) {
+            user.organization = organization;
+          }
+        }
+
+        return this.userRepository.save(user);
+      } else {
+        throw new ConflictException('Organization is not exists')
+      }
+    }
+
   }
 
   async findByEmail(email: string): Promise<User> {
@@ -46,8 +64,22 @@ export class UserService {
   }
 
   async update(id: string, updateUserDto: Partial<CreateUserDto>): Promise<User> {
-    const user = await this.findById(id);
-    Object.assign(user, updateUserDto);
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    if (updateUserDto.email) user.email = updateUserDto.email;
+    if (updateUserDto.password) user.passwordHash = await bcrypt.hash(updateUserDto.password, 10);
+    if (updateUserDto.role) user.role = updateUserDto.role;
+
+    if (updateUserDto.organizationId) {
+      const organization = await this.organizationRepository.findOne({ where: { id: updateUserDto.organizationId } });
+      if (organization) {
+        user.organization = organization;
+      }
+    }
+
     return this.userRepository.save(user);
   }
 

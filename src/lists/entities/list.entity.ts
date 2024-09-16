@@ -2,7 +2,6 @@ import { Campaign } from 'src/campaigns/entities/campaign.entity';
 import { Organization } from 'src/organizations/entities/organization.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn } from 'typeorm';
 
-
 @Entity('lists')
 export class List {
     @PrimaryGeneratedColumn('uuid')
